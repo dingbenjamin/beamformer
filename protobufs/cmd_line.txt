@@ -1,1 +1,0 @@
-protoc --plugin=/media/wschuetz/Shared/Uni/Capstone/beamforming\ code/nanopb/generator/protoc-gen-nanopb --nanopb_out=. SetDacVoltage.proto

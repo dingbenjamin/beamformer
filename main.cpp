@@ -16,6 +16,8 @@ void main(void) {
   Dac dac2(&spi, GPIO_PORT_P5, GPIO_PIN6);
   PowerAmplifier pa2(&spi, GPIO_PORT_P2, GPIO_PIN4);
 
+    uint8_t command_id;
+
   while (1) {
     uart.Read(uart_read_buffer, 1);
 
@@ -23,6 +25,11 @@ void main(void) {
         continue;
     }
 
+    uart.Read(command_id, 1);
+
+    if()
+
+    uart.Read(uart_read_buffer, 1)
     uint8_t config_byte = 0x07;
     dac1.SetDacVoltage(2.5, config_byte);
     config_byte = 0x17;
