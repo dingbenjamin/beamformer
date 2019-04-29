@@ -3,6 +3,7 @@
 
 #include <utils/nanopb_utils.h>
 #include <commands/proto/SetDacVoltagePayload.pb.h>
+#include <commands/proto/SetPaAttenuationPayload.pb.h>
 
 typedef enum {
     kSetDacVoltageCommand,

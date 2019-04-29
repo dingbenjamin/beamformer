@@ -53,7 +53,24 @@ void main(void)
             }
             else
             {
-                dac2.SetDacVoltage(2.5, config_byte);
+                dac2.SetDacVoltage(payload.voltage, config_byte);
+            }
+        }
+        if (command_id == kSetPaAttenuationCommand)
+        {
+            uart.Read(uart_read_buffer, SetDacVoltagePayload_size);
+            SetPaAttenuationPayload payload;
+            pb_istream_t stream = pb_istream_from_buffer(
+                    uart_read_buffer, SetPaAttenuationPayload_size);
+            assert(pb_decode(&stream, SetPaAttenuationPayload_fields, &payload));
+
+            if (payload.pa_id == 0)
+            {
+                pa1.SetPaAttenuation(payload.attenuation);
+            }
+            else
+            {
+                pa2.SetPaAttenuation(payload.attenuation);
             }
         }
     }
