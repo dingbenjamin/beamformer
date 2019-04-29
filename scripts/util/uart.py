@@ -1,9 +1,16 @@
 import serial
 import google.protobuf
-from nanopb.SetDacVoltage_pb2 import SetDacVoltage
+from nanopb.SetDacVoltagePayload_pb2 import SetDacVoltagePayload
+import struct
 
 DAC_MAX_VOLTAGE = 5
 DAC_RESOLUTION = 1023
+SYNC_BYTE = 0xA5
+
+command_ids = {'set_dac_voltage': 0, 'set_pa_attn': 2}
+dac_ids = {'dac_1': 0, 'dac_2': 1, 'dac_3': 2, 'dac_4': 3}
+dac_channels = {'channel_a': 0, 'channel_b': 1}
+
 
 class Uart:
     def __init__(self, port, baudrate, timeout=3):
@@ -14,14 +21,17 @@ class Uart:
         self.ser.open()
 
     def write(self, command_id, data):
-        self.ser.write(bytes('\xa5','utf-8'))
-        self.ser.write(hex(command_id))
-        self.ser.write(data)
+        payload = b''
+        payload += struct.pack('<B', SYNC_BYTE)
+        payload += struct.pack('<B', command_id)
+        payload += data
+        self.ser.write(payload)
 
     def set_dac_voltage(self, dac_id, dac_channel, voltage):
-        msg = SetDacVoltage()
-        msg.dac_channel = 0 if 'a' else 1
-        msg.dac_id = dac_id
+        msg = SetDacVoltagePayload()
+        msg.dac_channel = dac_channels.get(dac_channel, None)
+        msg.dac_id = dac_ids.get(dac_id, None)
+        if msg.dac_channel == None or msg.dac_id == None:
+            raise ValueError("DAC channel or DAC id is invalid.")
         msg.voltage = voltage
-        self.write(1, msg.SerializeToString())
-    
+        self.write(command_ids['set_dac_voltage'], msg.SerializeToString())

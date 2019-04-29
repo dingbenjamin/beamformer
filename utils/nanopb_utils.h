@@ -1,7 +1,7 @@
 #ifndef SRC_UTIL_NANOPB_UTILS_H_
 #define SRC_UTIL_NANOPB_UTILS_H_
 
-#include <nanopb/pb_decode.h
+#include <nanopb/pb_decode.h>
 #include <nanopb/pb_encode.h>
 
 #define NanopbEncode(NanopbMessageType)                              \
@@ -16,7 +16,7 @@ class NanopbUtils {
    public:
     template <typename NanopbMessageType, uint16_t NanopbMessageType_size,
               const pb_field_t* NanopbMessageType_fields>
-    static void Encode(byte buffer[], const NanopbMessageType& message) {
+    static void Encode(uint8_t buffer[], const NanopbMessageType& message) {
         pb_ostream_t stream =
             pb_ostream_from_buffer(buffer, NanopbMessageType_size);
         // TODO(dingbenjamin): Say which nanopb message failed to encode
@@ -27,7 +27,7 @@ class NanopbUtils {
 
     template <typename NanopbMessageType, uint16_t NanopbMessageType_size,
               const pb_field_t* NanopbMessageType_fields>
-    static NanopbMessageType Decode(const byte buffer[]) {
+    static NanopbMessageType Decode(const uint8_t buffer[]) {
         pb_istream_t stream =
             pb_istream_from_buffer(buffer, NanopbMessageType_size);
         NanopbMessageType message_struct;
