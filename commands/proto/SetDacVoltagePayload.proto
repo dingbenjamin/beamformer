@@ -1,3 +1,4 @@
+
 message SetDacVoltagePayload {
   required fixed32 dac_id = 1 [default = 0];
   required fixed32 dac_channel = 2 [default = 0];
