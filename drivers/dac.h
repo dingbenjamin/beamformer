@@ -32,6 +32,10 @@ class Dac
         kShutdown = 0x00
     } DacShutdown;
 
+    static constexpr uint8_t kDefaultConfigByteChannelA = 0x17;
+    static constexpr uint8_t kDefaultConfigByteChannelB = 0x07;
+
+
   private:
     uint16_t GetWriteCommand(float voltage, uint8_t config_bytes);
     uint8_t GetConfigByte(DacChannel channel, VrefBuffer buffered, DacVrefGain gain, DacShutdown active);

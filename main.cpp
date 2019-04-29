@@ -1,3 +1,4 @@
+#include <commands/command.h>
 #include <drivers/dac.h>
 #include <drivers/pa.h>
 #include <drivers/uart.h>
@@ -8,7 +9,7 @@ void main(void) {
   WDT_A_holdTimer();
 
   Uart uart;
-  uint8_t uart_read_buffer[50];
+  uint8_t uart_read_buffer[100];
 
   Spi spi;
   Dac dac1(&spi, GPIO_PORT_P2, GPIO_PIN6);
@@ -16,28 +17,31 @@ void main(void) {
   Dac dac2(&spi, GPIO_PORT_P5, GPIO_PIN6);
   PowerAmplifier pa2(&spi, GPIO_PORT_P2, GPIO_PIN4);
 
-    uint8_t command_id;
+  uint8_t command_id;
 
   while (1) {
     uart.Read(uart_read_buffer, 1);
 
-    if(uart_read_buffer[0] != Uart::kSyncByte) {
-        continue;
+    if (uart_read_buffer[0] != Uart::kSyncByte) {
+      continue;
     }
 
     uart.Read(command_id, 1);
 
-    if()
+    if (command_id == kSetDacVoltageCommand) {
+      uart.Read(uart_read_buffer, SetDacVoltagePayload_size);
+      SetDacVoltagePayload payload =
+          NanopbDecode(SetDacVoltagePayload)(uart_read_buffer);
 
-    uart.Read(uart_read_buffer, 1)
-    uint8_t config_byte = 0x07;
-    dac1.SetDacVoltage(2.5, config_byte);
-    config_byte = 0x17;
-    dac1.SetDacVoltage(2.5, config_byte);
+      uint8_t config_byte = (payload.dac_channel == Dac::kDacChannelA)
+                                ? Dac::kDefaultConfigByteChannelA
+                                : Dac::kDefaultConfigByteChannelB;
 
-    config_byte = 0x07;
-    dac2.SetDacVoltage(2.5, config_byte);
-    config_byte = 0x17;
-    dac2.SetDacVoltage(2.5, config_byte);
+      if (payload.dac_id == 1) {
+        dac1.SetDacVoltage(payload.voltage, config_byte);
+      } else {
+        dac2.SetDacVoltage(2.5, config_byte);
+      }
+    }
   }
 }
