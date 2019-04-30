@@ -57,6 +57,7 @@ void main(void) {
                 } else {
                     dac4.SetDacVoltage(dac_payload.voltage, config_byte);
                 }
+                break;
 
             case kSetPaAttenuationCommand:
                 uart.Read(uart_read_buffer, SetPaAttenuationPayload_size);
@@ -75,6 +76,7 @@ void main(void) {
                 } else{
                     pa4.SetPaAttenuation(pa_payload.attenuation);
                 }
+                break;
         }
     }
 }
