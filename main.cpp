@@ -15,9 +15,13 @@ void main(void) {
 
     const Spi spi;
     Dac dac1(spi, GPIO_PORT_P2, GPIO_PIN6);
-    PowerAmplifier pa1(spi, GPIO_PORT_P2, GPIO_PIN7);
+    PowerAmplifier pa1(spi, GPIO_PORT_P2, GPIO_PIN4);
     Dac dac2(spi, GPIO_PORT_P5, GPIO_PIN6);
-    PowerAmplifier pa2(spi, GPIO_PORT_P2, GPIO_PIN4);
+    PowerAmplifier pa2(spi, GPIO_PORT_P6, GPIO_PIN6);
+    Dac dac3(spi, GPIO_PORT_P6, GPIO_PIN7);
+    PowerAmplifier pa3(spi, GPIO_PORT_P2, GPIO_PIN3);
+    Dac dac4(spi, GPIO_PORT_P5, GPIO_PIN1);
+    PowerAmplifier pa4(spi, GPIO_PORT_P3, GPIO_PIN5);
 
     uint8_t command_id;
 
@@ -43,14 +47,19 @@ void main(void) {
                                           ? Dac::kDefaultConfigByteChannelA
                                           : Dac::kDefaultConfigByteChannelB;
 
+               
                 if (dac_payload.dac_id == 0) {
                     dac1.SetDacVoltage(dac_payload.voltage, config_byte);
-                } else {
+                } else if(dac_payload.dac_id == 1){
                     dac2.SetDacVoltage(dac_payload.voltage, config_byte);
+                } else if(dac_payload.dac_id == 2){
+                    dac3.SetDacVoltage(dac_payload.voltage, config_byte);
+                } else {
+                    dac4.SetDacVoltage(dac_payload.voltage, config_byte);
                 }
 
             case kSetPaAttenuationCommand:
-                uart.Read(uart_read_buffer, SetDacVoltagePayload_size);
+                uart.Read(uart_read_buffer, SetPaAttenuationPayload_size);
                 SetPaAttenuationPayload pa_payload;
                 stream = pb_istream_from_buffer(
                     uart_read_buffer, SetPaAttenuationPayload_size);
@@ -59,8 +68,12 @@ void main(void) {
 
                 if (pa_payload.pa_id == 0) {
                     pa1.SetPaAttenuation(pa_payload.attenuation);
-                } else {
+                } else if (pa_payload.pa_id == 1){
                     pa2.SetPaAttenuation(pa_payload.attenuation);
+                } else if (pa_payload.pa_id == 2) {
+                    pa3.SetPaAttenuation(pa_payload.attenuation);
+                } else{
+                    pa4.SetPaAttenuation(pa_payload.attenuation);
                 }
         }
     }
