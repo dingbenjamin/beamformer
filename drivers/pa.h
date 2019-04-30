@@ -16,7 +16,7 @@ class PowerAmplifier {
     uint8_t cs_port;
     uint8_t cs_pin;
     static constexpr float kPaMaxAttenuation = 31.5;
-    static constexpr float kPaMinAttenuation = 31.5;
+    static constexpr float kPaMinAttenuation = 0;
     static constexpr uint16_t kPaResolution = 63;
 };
 #endif /* DRIVERS_PA_H_ */
