@@ -33,34 +33,34 @@ void main(void) {
         switch (command_id) {
             case kSetDacVoltageCommand:
                 uart.Read(uart_read_buffer, SetDacVoltagePayload_size);
-                SetDacVoltagePayload payload;
+                SetDacVoltagePayload dac_payload;
                 pb_istream_t stream = pb_istream_from_buffer(
                     uart_read_buffer, SetDacVoltagePayload_size);
                 assert(
-                    pb_decode(&stream, SetDacVoltagePayload_fields, &payload));
+                    pb_decode(&stream, SetDacVoltagePayload_fields, &dac_payload));
 
-                uint8_t config_byte = (payload.dac_channel == Dac::kDacChannelA)
+                uint8_t config_byte = (dac_payload.dac_channel == Dac::kDacChannelA)
                                           ? Dac::kDefaultConfigByteChannelA
                                           : Dac::kDefaultConfigByteChannelB;
 
-                if (payload.dac_id == 0) {
-                    dac1.SetDacVoltage(payload.voltage, config_byte);
+                if (dac_payload.dac_id == 0) {
+                    dac1.SetDacVoltage(dac_payload.voltage, config_byte);
                 } else {
-                    dac2.SetDacVoltage(payload.voltage, config_byte);
+                    dac2.SetDacVoltage(dac_payload.voltage, config_byte);
                 }
 
             case kSetPaAttenuationCommand:
                 uart.Read(uart_read_buffer, SetDacVoltagePayload_size);
-                SetPaAttenuationPayload payload;
-                pb_istream_t stream = pb_istream_from_buffer(
+                SetPaAttenuationPayload pa_payload;
+                stream = pb_istream_from_buffer(
                     uart_read_buffer, SetPaAttenuationPayload_size);
                 assert(pb_decode(&stream, SetPaAttenuationPayload_fields,
-                                 &payload));
+                                 &pa_payload));
 
-                if (payload.pa_id == 0) {
-                    pa1.SetPaAttenuation(payload.attenuation);
+                if (pa_payload.pa_id == 0) {
+                    pa1.SetPaAttenuation(pa_payload.attenuation);
                 } else {
-                    pa2.SetPaAttenuation(payload.attenuation);
+                    pa2.SetPaAttenuation(pa_payload.attenuation);
                 }
         }
     }
