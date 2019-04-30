@@ -10,3 +10,7 @@ Debug/
 *.pyc
 
 \.vscode/
+
+*.swp
+
+tags
