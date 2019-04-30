@@ -1,6 +1,6 @@
 #include <commands/command.h>
 #include <drivers/dac.h>
-o#include <drivers/pa.h>
+#include <drivers/pa.h>
 #include <drivers/uart.h>
 #include <nanopb/pb_decode.h>
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
@@ -13,11 +13,11 @@ void main(void) {
     Uart uart;
     uint8_t uart_read_buffer[100];
 
-    Spi spi;
-    Dac dac1(&spi, GPIO_PORT_P2, GPIO_PIN6);
-    PowerAmplifier pa1(&spi, GPIO_PORT_P2, GPIO_PIN7);
-    Dac dac2(&spi, GPIO_PORT_P5, GPIO_PIN6);
-    PowerAmplifier pa2(&spi, GPIO_PORT_P2, GPIO_PIN4);
+    const Spi spi;
+    Dac dac1(spi, GPIO_PORT_P2, GPIO_PIN6);
+    PowerAmplifier pa1(spi, GPIO_PORT_P2, GPIO_PIN7);
+    Dac dac2(spi, GPIO_PORT_P5, GPIO_PIN6);
+    PowerAmplifier pa2(spi, GPIO_PORT_P2, GPIO_PIN4);
 
     uint8_t command_id;
 

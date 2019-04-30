@@ -7,12 +7,12 @@
 
 class PowerAmplifier {
    public:
-    PowerAmplifier(Spi *spi, uint8_t cs_port, uint8_t cs_pin);
+    PowerAmplifier(const Spi& spi, uint8_t cs_port, uint8_t cs_pin);
     void SetPaAttenuation(float attenuation);
     uint8_t GetGainCode(float attenuation);
 
    private:
-    Spi *spi;
+    const Spi& spi;
     uint8_t cs_port;
     uint8_t cs_pin;
     static constexpr float kPaMaxAttenuation = 31.5;

@@ -16,7 +16,7 @@ class Spi {
         EUSCI_B_SPI_3PIN                            // 3Wire SPI Mode
     };
     void TransmitData(uint8_t *write_buffer, uint8_t write_buffer_len,
-                      uint8_t cs_port, uint8_t cs_pin);
+                      uint8_t cs_port, uint8_t cs_pin) const;
 };
 
 #endif /* DRIVERS_SPI_H_ */

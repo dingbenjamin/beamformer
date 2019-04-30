@@ -7,7 +7,7 @@
 
 class Dac {
    public:
-    Dac(Spi *spi, uint8_t cs_port, uint8_t cs_pin);
+    Dac(const Spi& spi, uint8_t cs_port, uint8_t cs_pin);
     void SetDacVoltage(float value, uint8_t config_byte);
 
     typedef enum {
@@ -37,7 +37,7 @@ class Dac {
     static constexpr float kVref = 5;
     static constexpr float kDacStartupVoltage = 2.5;
     static constexpr uint16_t kDacResolution = 1023;
-    Spi *spi;
+    const Spi& spi;
     uint8_t cs_port;
     uint8_t cs_pin;
 };

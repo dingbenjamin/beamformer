@@ -10,7 +10,7 @@ Spi::Spi() {
 }
 
 void Spi::TransmitData(uint8_t *write_buffer, uint8_t write_buffer_len,
-                       uint8_t cs_port, uint8_t cs_pin) {
+                       uint8_t cs_port, uint8_t cs_pin) const {
     MAP_GPIO_setOutputLowOnPin(cs_port, cs_pin);
     for (uint8_t i = 0; i < write_buffer_len; i++) {
         SPI_transmitData(EUSCI_B0_BASE, write_buffer[i]);

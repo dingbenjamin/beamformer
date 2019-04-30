@@ -2,7 +2,7 @@
 #include <drivers/spi.h>
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
-Dac::Dac(Spi *spi, uint8_t cs_port, uint8_t cs_pin)
+Dac::Dac(const Spi& spi, uint8_t cs_port, uint8_t cs_pin)
     : spi(spi), cs_port(cs_port), cs_pin(cs_pin) {
     MAP_GPIO_setAsOutputPin(cs_port, cs_pin);
     MAP_GPIO_setOutputHighOnPin(cs_port, cs_pin);
@@ -20,7 +20,7 @@ void Dac::SetDacVoltage(float voltage, uint8_t config_byte) {
     uint8_t write_buffer[2];
     write_buffer[1] = write_command;
     write_buffer[0] = write_command >> 8;
-    spi->TransmitData(write_buffer, 2, cs_port, cs_pin);
+    spi.TransmitData(write_buffer, 2, cs_port, cs_pin);
 }
 
 uint16_t Dac::GetWriteCommand(float voltage, uint8_t config_bytes) {
