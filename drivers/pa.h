@@ -2,17 +2,16 @@
 #define DRIVERS_PA_H_
 
 #include <drivers/spi.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
-class PowerAmplifier
-{
-  public:
+class PowerAmplifier {
+   public:
     PowerAmplifier(Spi *spi, uint8_t cs_port, uint8_t cs_pin);
     void SetPaAttenuation(float attenuation);
     uint8_t GetGainCode(float attenuation);
-    
-  private:
+
+   private:
     Spi *spi;
     uint8_t cs_port;
     uint8_t cs_pin;
