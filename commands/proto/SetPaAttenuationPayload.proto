@@ -1,4 +1,4 @@
 message SetPaAttenuationPayload {
   required fixed32 pa_id = 1 [default = 0];
-  required fixed32 attenuation = 2 [default = 0];
+  required float attenuation = 2 [default = 0];
 }

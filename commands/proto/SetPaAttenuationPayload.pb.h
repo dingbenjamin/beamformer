@@ -17,13 +17,13 @@ extern "C" {
 /* Struct definitions */
 typedef struct _SetPaAttenuationPayload {
     uint32_t pa_id;
-    uint32_t attenuation;
+    float attenuation;
 /* @@protoc_insertion_point(struct:SetPaAttenuationPayload) */
 } SetPaAttenuationPayload;
 
 
 /* Initializer values for message structs */
-#define SetPaAttenuationPayload_init_default     {0u, 0u}
+#define SetPaAttenuationPayload_init_default     {0u, 0}
 #define SetPaAttenuationPayload_init_zero        {0, 0}
 
 /* Field tags (for use in manual encoding/decoding) */
@@ -33,7 +33,7 @@ typedef struct _SetPaAttenuationPayload {
 /* Struct field encoding specification for nanopb */
 #define SetPaAttenuationPayload_FIELDLIST(X, a) \
 X(a, STATIC, REQUIRED, FIXED32, pa_id, 1) \
-X(a, STATIC, REQUIRED, FIXED32, attenuation, 2)
+X(a, STATIC, REQUIRED, FLOAT, attenuation, 2)
 #define SetPaAttenuationPayload_CALLBACK NULL
 #define SetPaAttenuationPayload_DEFAULT (const uint8_t*)"\x0d\x00\x00\x00\x00\x15\x00\x00\x00\x00\x00"
 

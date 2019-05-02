@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='SetPaAttenuationPayload.proto',
   package='',
   syntax='proto2',
-  serialized_pb=_b('\n\x1dSetPaAttenuationPayload.proto\"C\n\x17SetPaAttenuationPayload\x12\x10\n\x05pa_id\x18\x01 \x02(\x07:\x01\x30\x12\x16\n\x0b\x61ttenuation\x18\x02 \x02(\x07:\x01\x30')
+  serialized_pb=_b('\n\x1dSetPaAttenuationPayload.proto\"C\n\x17SetPaAttenuationPayload\x12\x10\n\x05pa_id\x18\x01 \x02(\x07:\x01\x30\x12\x16\n\x0b\x61ttenuation\x18\x02 \x02(\x02:\x01\x30')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -42,8 +42,8 @@ _SETPAATTENUATIONPAYLOAD = _descriptor.Descriptor(
       options=None),
     _descriptor.FieldDescriptor(
       name='attenuation', full_name='SetPaAttenuationPayload.attenuation', index=1,
-      number=2, type=7, cpp_type=3, label=2,
-      has_default_value=True, default_value=0,
+      number=2, type=2, cpp_type=6, label=2,
+      has_default_value=True, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
