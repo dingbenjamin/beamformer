@@ -38,7 +38,17 @@ void main(void) {
 
         switch (command_id) {
             case kSteerCommand:
-                // TODO(dingbenjamin): Do the steering
+                uart.Read(uart_read_buffer, SetSteeringAnglePayload_size);
+                SetSteeringAnglePayload steer_payload;
+                pb_istream_t stream = pb_istream_from_buffer(
+                    uart_read_buffer, SetSteeringAnglePayload_size);
+                assert(pb_decode(&stream, SetSteeringAnglePayload_fields,
+                                 &steer_payload));
+                chain_1.Steer(steer_payload.steering_angle);
+                chain_2.Steer(steer_payload.steering_angle);
+                chain_3.Steer(steer_payload.steering_angle);
+                chain_3.Steer(steer_payload.steering_angle);
+                // TODO(dingbenjamin): Error handling for invalid angle
                 break;
 
             case kSetDacVoltageCommand:
