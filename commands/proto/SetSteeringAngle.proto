@@ -1,0 +1,4 @@
+syntax = 'proto2';
+message SetSteeringAnglePayload {
+  required fixed32 attenuation = 1 [default = 0];
+}
