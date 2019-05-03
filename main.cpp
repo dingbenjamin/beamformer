@@ -54,7 +54,7 @@ void main(void) {
             case kSetDacVoltageCommand:
                 uart.Read(uart_read_buffer, SetDacVoltagePayload_size);
                 SetDacVoltagePayload dac_payload;
-                pb_istream_t stream = pb_istream_from_buffer(
+                stream = pb_istream_from_buffer(
                     uart_read_buffer, SetDacVoltagePayload_size);
                 assert(pb_decode(&stream, SetDacVoltagePayload_fields,
                                  &dac_payload));

@@ -3,6 +3,7 @@
 
 #include <commands/proto/SetDacVoltagePayload.pb.h>
 #include <commands/proto/SetPaAttenuationPayload.pb.h>
+#include <commands/proto/SetSteeringAnglePayload.pb.h>
 #include <utils/nanopb_utils.h>
 
 typedef enum {
