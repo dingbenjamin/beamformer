@@ -16,7 +16,7 @@ extern "C" {
 
 /* Struct definitions */
 typedef struct _SetSteeringAnglePayload {
-    uint32_t attenuation;
+    uint32_t steering_angle;
 /* @@protoc_insertion_point(struct:SetSteeringAnglePayload) */
 } SetSteeringAnglePayload;
 
@@ -26,11 +26,11 @@ typedef struct _SetSteeringAnglePayload {
 #define SetSteeringAnglePayload_init_zero        {0}
 
 /* Field tags (for use in manual encoding/decoding) */
-#define SetSteeringAnglePayload_attenuation_tag  1
+#define SetSteeringAnglePayload_steering_angle_tag 1
 
 /* Struct field encoding specification for nanopb */
 #define SetSteeringAnglePayload_FIELDLIST(X, a) \
-X(a, STATIC, REQUIRED, FIXED32, attenuation, 1)
+X(a, STATIC, REQUIRED, FIXED32, steering_angle, 1)
 #define SetSteeringAnglePayload_CALLBACK NULL
 #define SetSteeringAnglePayload_DEFAULT (const uint8_t*)"\x0d\x00\x00\x00\x00\x00"
 
