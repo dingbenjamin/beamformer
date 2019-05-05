@@ -47,7 +47,7 @@ void main(void) {
                 chain_1.Steer(steer_payload.steering_angle);
                 chain_2.Steer(steer_payload.steering_angle);
                 chain_3.Steer(steer_payload.steering_angle);
-                chain_3.Steer(steer_payload.steering_angle);
+                chain_4.Steer(steer_payload.steering_angle);
                 // TODO(dingbenjamin): Error handling for invalid angle
                 break;
 

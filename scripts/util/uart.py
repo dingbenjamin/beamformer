@@ -2,8 +2,9 @@ import serial
 import google.protobuf
 from nanopb.SetDacVoltagePayload_pb2 import SetDacVoltagePayload
 from nanopb.SetPaAttenuationPayload_pb2 import SetPaAttenuationPayload
+from nanopb.SetSteeringAnglePayload_pb2 import SetSteeringAnglePayload
 import struct
-import nanopb.SetSteeringAnglePayload_pb2 import SetSteeringAnglePayload_pb2
+
 
 DAC_MAX_VOLTAGE = 5
 DAC_RESOLUTION = 1023

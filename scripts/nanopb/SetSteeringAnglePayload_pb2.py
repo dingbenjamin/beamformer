@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='SetSteeringAnglePayload.proto',
   package='',
   syntax='proto2',
-  serialized_pb=_b('\n\x1dSetSteeringAnglePayload.proto\"5\n\x17SetSteeringAnglePayload\x12\x1a\n\x0fsteeering_angle\x18\x01 \x02(\x07:\x01\x30')
+  serialized_pb=_b('\n\x1dSetSteeringAnglePayload.proto\"4\n\x17SetSteeringAnglePayload\x12\x19\n\x0esteering_angle\x18\x01 \x02(\x07:\x01\x30')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
@@ -34,7 +34,7 @@ _SETSTEERINGANGLEPAYLOAD = _descriptor.Descriptor(
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='steeering_angle', full_name='SetSteeringAnglePayload.steeering_angle', index=0,
+      name='steering_angle', full_name='SetSteeringAnglePayload.steering_angle', index=0,
       number=1, type=7, cpp_type=3, label=2,
       has_default_value=True, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -53,7 +53,7 @@ _SETSTEERINGANGLEPAYLOAD = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=33,
-  serialized_end=86,
+  serialized_end=85,
 )
 
 DESCRIPTOR.message_types_by_name['SetSteeringAnglePayload'] = _SETSTEERINGANGLEPAYLOAD
