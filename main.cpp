@@ -2,6 +2,7 @@
 #include <drivers/dac.h>
 #include <drivers/pa.h>
 #include <drivers/uart.h>
+#include <drivers/adc.h>
 #include <nanopb/pb_decode.h>
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <transmitter.h>
@@ -24,6 +25,8 @@ void main(void) {
                         GPIO_PORT_P2, GPIO_PIN3,    TransmitCalibration3()};
     Transmitter chain_4{spi,          GPIO_PORT_P5, GPIO_PIN1,
                         GPIO_PORT_P3, GPIO_PIN5,    TransmitCalibration4()};
+
+    Adc adc();
 
     uint8_t command_id;
 
