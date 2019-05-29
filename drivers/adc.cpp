@@ -2,15 +2,9 @@
 #include <string.h>
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 
-// TODO(dingbenjamin): Find a nicer way of doing this
-bool converted = false;
 uint16_t results_buffer[8];
 
 Adc::Adc() {
-    /* Halting WDT  */
-    MAP_WDT_A_holdTimer();
-    MAP_Interrupt_enableSleepOnIsrExit();
-
     /* Zero-filling buffer */
     memset(results_buffer, 0x00, 8 * sizeof(uint16_t));
 
@@ -52,7 +46,7 @@ Adc::Adc() {
     // Pin 6.1
     MAP_ADC14_configureConversionMemory(
         ADC_MEM6, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A14, false);
-    /// Pin 6.0
+    // Pin 6.0
     MAP_ADC14_configureConversionMemory(
         ADC_MEM7, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A15, false);
 
@@ -67,32 +61,34 @@ Adc::Adc() {
     /* Setting up the sample timer to automatically step through the sequence
      * convert. */
     MAP_ADC14_enableSampleTimer(ADC_AUTOMATIC_ITERATION);
+
+    MAP_ADC14_enableConversion();
 }
 
 Adc::ArraySlice Adc::Sample() {
     /* Triggering the start of the sample */
-    MAP_ADC14_enableConversion();
     MAP_ADC14_toggleConversionTrigger();
 
-    while (!converted) {
+    while (ADC14_isBusy()) {
     }
-    converted = false;
 
     return Adc::ArraySlice{
-            RawReadingToFloat(results_buffer[7]),
-            RawReadingToFloat(results_buffer[3]),
-            RawReadingToFloat(results_buffer[7]),
-            RawReadingToFloat(results_buffer[6]),
-            RawReadingToFloat(results_buffer[5]),
-            RawReadingToFloat(results_buffer[2]),
-            RawReadingToFloat(results_buffer[1]),
-            RawReadingToFloat(results_buffer[0])
+            RawReadingToFloat(results_buffer[7]), // i1 : 6.0
+            RawReadingToFloat(results_buffer[3]), // q1 : 4.3
+            RawReadingToFloat(results_buffer[6]), // i2 : 6.1
+            RawReadingToFloat(results_buffer[5]), // q2 : 4.0
+            RawReadingToFloat(results_buffer[4]), // i3 : 4.2
+            RawReadingToFloat(results_buffer[2]), // q3 : 4.4
+            RawReadingToFloat(results_buffer[1]), // i4 : 4.5
+            RawReadingToFloat(results_buffer[0])  // q4 : 4.7
     };
 }
 
 float Adc::RawReadingToFloat(uint16_t raw) {
-    return raw * kRefVoltage / (static_cast<uint16_t>(2) << 14);
+    return raw * kRefVoltage / (static_cast<uint16_t>(1) << 14);
 }
+
+extern "C" {
 
 /* This interrupt is fired whenever a conversion is completed and placed in
  * ADC_MEM7. This signals the end of conversion and the results array is
@@ -106,6 +102,6 @@ void ADC14_IRQHandler() {
     if (status & ADC_INT7) {
         MAP_ADC14_getMultiSequenceResult(results_buffer);
     }
+}
 
-    converted = true;
 }
