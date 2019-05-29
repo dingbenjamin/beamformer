@@ -161,6 +161,14 @@ int main(void) {
     MAP_WDT_A_holdTimer();
     MAP_Interrupt_enableSleepOnIsrExit();
 
+    /* Configuring GPIO as an output */
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
+
+    /* Configuring SysTick to trigger at 1500000 (MCLK is 1.5MHz so this will
+     * make it toggle every 1s), used for the error LED */
+    MAP_SysTick_enableModule();
+    MAP_SysTick_setPeriod(1500000);
+
     /* Setting up clocks
      * MCLK = MCLK = 3MHz
      * ACLK = REFO = 32Khz */
@@ -242,7 +250,11 @@ extern "C" {
 void ADC14_IRQHandler(void) {
     uint64_t status;
 
-    // TODO(dingbenjamin): Check to see if the processing is failing timing constraints
+    if (processing) {
+        // Blink the LED to alert that timing constraints have failed
+        MAP_SysTick_enableInterrupt();
+    }
+
     processing = true;
 
     status = MAP_ADC14_getEnabledInterruptStatus();
@@ -273,6 +285,10 @@ void ADC14_IRQHandler(void) {
     }
 
     processing = false;
+}
+
+void SysTick_Handler(void) {
+    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P1, GPIO_PIN0);
 }
 
 }
