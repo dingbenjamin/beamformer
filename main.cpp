@@ -1,12 +1,16 @@
 #include <commands/command.h>
+#include <drivers/adc.h>
 #include <drivers/dac.h>
 #include <drivers/pa.h>
 #include <drivers/uart.h>
-#include <drivers/adc.h>
+#include <filter/filter_coefficients.h>
+#include <filter/filters.h>
 #include <nanopb/pb_decode.h>
 #include <ti/devices/msp432p4xx/driverlib/driverlib.h>
 #include <transmitter.h>
 #include <cassert>
+#include <functional>
+#include <vector>
 #include "msp.h"
 
 void main(void) {
@@ -56,8 +60,8 @@ void main(void) {
             case kSetDacVoltageCommand:
                 uart.Read(uart_read_buffer, SetDacVoltagePayload_size);
                 SetDacVoltagePayload dac_payload;
-                stream = pb_istream_from_buffer(
-                    uart_read_buffer, SetDacVoltagePayload_size);
+                stream = pb_istream_from_buffer(uart_read_buffer,
+                                                SetDacVoltagePayload_size);
                 assert(pb_decode(&stream, SetDacVoltagePayload_fields,
                                  &dac_payload));
                 WDT_A_holdTimer();
@@ -104,6 +108,31 @@ void main(void) {
 #endif
 
 #ifdef RECEIVE
+    Iir3 filter_1{Iir3::MakeIir3(iir_stg1_num_1, iir_stg1_den_1)};
+    DownSampler<decimation_factor_stg1> downsampler_1{};
 
+    Iir3 filter_2{Iir3::MakeIir3(iir_stg2_num_1, iir_stg2_den_1)};
+    DownSampler<decimation_factor_stg2> downsampler_2{};
+
+    Iir3 filter_3_1{Iir3::MakeIir3(iir_stg3_num_1, iir_stg3_den_1)};
+    Iir3 filter_3_2{Iir3::MakeIir3(iir_stg3_num_2, iir_stg3_den_2)};
+    Iir3 filter_3_3{Iir3::MakeIir3(iir_stg3_num_3, iir_stg3_den_3)};
+    Gain gain_3{iir_stg3_gain};
+    DownSampler<decimation_factor_stg3> downsampler_3{};
+
+    Iir3 filter_4_1{Iir3::MakeIir3(iir_stg4_num_1, iir_stg4_den_1)};
+    Iir3 filter_4_2{Iir3::MakeIir3(iir_stg4_num_2, iir_stg4_den_2)};
+    Iir3 filter_4_3{Iir3::MakeIir3(iir_stg4_num_3, iir_stg4_den_3)};
+    Iir3 filter_4_4{Iir3::MakeIir3(iir_stg4_num_4, iir_stg4_den_4)};
+    Iir3 filter_4_5{Iir3::MakeIir3(iir_stg4_num_5, iir_stg4_den_5)};
+    Gain gain_4_1{iir_stg4_gain_1};
+    Gain gain_4_2{iir_stg4_gain_1};
+    DownSampler<decimation_factor_stg4> downsampler_4{};
+
+    Chain decimator{std::vector<SignalProcessor*>{
+        &filter_1, &downsampler_1, &filter_2, &downsampler_2, &filter_3_1,
+        &filter_3_2, &filter_3_3, &gain_3, &downsampler_3, &filter_4_1,
+        &filter_4_2, &filter_4_3, &filter_4_4, &filter_4_5, &gain_4_1,
+        &gain_4_2, &downsampler_4}};
 #endif
 }

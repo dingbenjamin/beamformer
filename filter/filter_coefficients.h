@@ -3,9 +3,9 @@
 
 /* Filter Structure
 
-   in -> H(stg1) -> downsample(M1) -> H(stg2) -> downsample(M2) -> 
+   in -> H(stg1) -> downsample(M1) -> H(stg2) -> downsample(M2) ->
    -> H(stg3) -> downsample(M3) -> H(stg4) -> downsample(M4) -> out
-
+y
 */
 
 static const uint8_t decimation_factor_stg1 = 2;
