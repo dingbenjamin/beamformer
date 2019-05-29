@@ -12,6 +12,7 @@
 void main(void) {
     WDT_A_holdTimer();
 
+#ifdef TRANSMIT
     Uart uart;
     uint8_t uart_read_buffer[100];
 
@@ -25,8 +26,6 @@ void main(void) {
                         GPIO_PORT_P2, GPIO_PIN3,    TransmitCalibration3()};
     Transmitter chain_4{spi,          GPIO_PORT_P5, GPIO_PIN1,
                         GPIO_PORT_P3, GPIO_PIN5,    TransmitCalibration4()};
-
-    Adc adc();
 
     uint8_t command_id;
 
@@ -61,7 +60,7 @@ void main(void) {
                     uart_read_buffer, SetDacVoltagePayload_size);
                 assert(pb_decode(&stream, SetDacVoltagePayload_fields,
                                  &dac_payload));
-
+                WDT_A_holdTimer();
                 uint8_t config_byte =
                     (dac_payload.dac_channel == Dac::kDacChannelA)
                         ? Dac::kDefaultConfigByteChannelA
@@ -102,4 +101,9 @@ void main(void) {
                 break;
         }
     }
+#endif
+
+#ifdef RECEIVE
+
+#endif
 }

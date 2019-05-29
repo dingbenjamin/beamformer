@@ -6,6 +6,9 @@
 \.vscode/ipch/2ed645b88a00c2f9/
 
 Debug/
+Transmit/
+Receive/
+Release/
 
 *.pyc
 
