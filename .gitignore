@@ -15,5 +15,6 @@ Release/
 \.vscode/
 
 *.swp
+*.csv
 
 tags
