@@ -21,3 +21,9 @@ void Uart::Read(uint8_t *read_buffer, uint8_t read_buffer_len) {
         read_buffer[i] = MAP_UART_receiveData(EUSCI_A0_BASE);
     }
 }
+
+void Uart::Write(uint8_t *write_buffer, uint8_t write_buffer_len) {
+    for (uint8_t i = 0; i < write_buffer_len; i++) {
+        MAP_UART_transmitData(EUSCI_A0_BASE, write_buffer[i]);
+    }
+}

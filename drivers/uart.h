@@ -20,7 +20,8 @@ class Uart {
         EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION  // Oversampling
     };
 
-    void Read(uint8_t *write_buffer, uint8_t write_buffer_len);
+    void Read(uint8_t *read_buffer, uint8_t read_buffer_len);
+    void Write(uint8_t *write_buffer, uint8_t write_buffer_len);
     static constexpr uint8_t kSyncByte = 0xA5;
 };
 
