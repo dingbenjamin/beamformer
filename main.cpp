@@ -154,7 +154,7 @@ Decimator decimator_i4;
 Decimator decimator_q4;
 
 uint16_t results_buffer[8];
-bool processing = false;
+volatile bool processing = false;
 
 int main(void) {
     /* Halting WDT  */
@@ -279,7 +279,7 @@ void ADC14_IRQHandler(void) {
         auto i3 = decimator_i1.execute(results.i3);
         auto q3 = decimator_q1.execute(results.q3);
         auto i4 = decimator_i1.execute(results.i4);
-        auto q4 = decimator_q1.execute(results.q4);
+//        auto q4 = decimator_q1.execute(results.q4);
 
         // TODO(dingbenjamin): Pipe out the results over UART
     }

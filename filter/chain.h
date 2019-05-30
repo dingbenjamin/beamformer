@@ -9,7 +9,7 @@ class Chain : public SignalProcessor {
     std::vector<SignalProcessor*> blocks;
 
    public:
-    Chain(std::vector<SignalProcessor*> _blocks);
+    Chain(std::vector<SignalProcessor*>&& _blocks);
     tl::optional<float> execute(tl::optional<float> sample);
 };
 

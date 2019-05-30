@@ -1,6 +1,7 @@
 #include <filter/chain.h>
+#include <utility>
 
-Chain::Chain(std::vector<SignalProcessor*> _blocks) : blocks(_blocks) {}
+Chain::Chain(std::vector<SignalProcessor*>&& _blocks) : blocks(std::move(_blocks)) {}
 
 tl::optional<float> Chain::execute(tl::optional<float> sample) {
     tl::optional<float> result{sample};
