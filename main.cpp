@@ -129,17 +129,6 @@ const Timer_A_CompareModeConfig compareConfig = {
     16384                                      // 16000 Period
 };
 
-struct ArraySlice {
-    float i1;
-    float q1;
-    float i2;
-    float q2;
-    float i3;
-    float q3;
-    float i4;
-    float q4;
-};
-
 float RawReadingToFloat(uint16_t raw) {
     return raw * 3.3 / (static_cast<uint16_t>(1) << 14);
 }
@@ -263,23 +252,22 @@ void ADC14_IRQHandler(void) {
     if (status & ADC_INT7) {
         MAP_ADC14_getMultiSequenceResult(results_buffer);
 
-        ArraySlice results{RawReadingToFloat(results_buffer[7]),   // i1 : 6.0
-                           RawReadingToFloat(results_buffer[3]),   // q1 : 4.3
-                           RawReadingToFloat(results_buffer[6]),   // i2 : 6.1
-                           RawReadingToFloat(results_buffer[5]),   // q2 : 4.0
-                           RawReadingToFloat(results_buffer[4]),   // i3 : 4.2
-                           RawReadingToFloat(results_buffer[2]),   // q3 : 4.4
-                           RawReadingToFloat(results_buffer[1]),   // i4 : 4.5
-                           RawReadingToFloat(results_buffer[0])};  // q4 : 4.7
-
-        auto i1 = decimator_i1.execute(results.i1);
-        auto q1 = decimator_q1.execute(results.q1);
-        auto i2 = decimator_i1.execute(results.i2);
-        auto q2 = decimator_q1.execute(results.q2);
-        auto i3 = decimator_i1.execute(results.i3);
-        auto q3 = decimator_q1.execute(results.q3);
-        auto i4 = decimator_i1.execute(results.i4);
-        auto q4 = decimator_q1.execute(results.q4);
+        auto i1 = decimator_i1.execute(
+            RawReadingToFloat(results_buffer[7]));  // i1 : 6.0
+        auto q1 = decimator_q1.execute(
+            RawReadingToFloat(results_buffer[3]));  // q1 : 4.3
+        auto i2 = decimator_i1.execute(
+            RawReadingToFloat(results_buffer[6]));  // i2 : 6.1
+        auto q2 = decimator_q1.execute(
+            RawReadingToFloat(results_buffer[5]));  // q2 : 4.0
+        auto i3 = decimator_i1.execute(
+            RawReadingToFloat(results_buffer[4]));  // i3 : 4.2
+        auto q3 = decimator_q1.execute(
+            RawReadingToFloat(results_buffer[2]));  // q3 : 4.4
+        auto i4 = decimator_i1.execute(
+            RawReadingToFloat(results_buffer[1]));  // i4 : 4.5
+        auto q4 = decimator_q1.execute(
+            RawReadingToFloat(results_buffer[0]));  // q4 : 4.7
 
         // Valid output
         if (i1 && q2 && i2 && q2 && i3 && q3 && i4 && q4) {
@@ -293,7 +281,6 @@ void ADC14_IRQHandler(void) {
 void SysTick_Handler(void) {
     MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P1, GPIO_PIN0);
 }
-
 }
 
 #endif
