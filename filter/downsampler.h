@@ -13,7 +13,7 @@ class DownSampler : public SignalProcessor {
     tl::optional<float> execute(tl::optional<float> sample) {
         if (!sample) {
             return tl::nullopt;
-        } else if (counter == Factor) {
+        } else if (counter == Factor - 1) {
             counter = 0;
             return sample;
         } else {

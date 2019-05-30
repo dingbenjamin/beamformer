@@ -139,8 +139,8 @@ float RawReadingToFloat(uint16_t raw) {
 // Timer_A Continuous Mode Configuration Parameter
 const Timer_A_UpModeConfig upModeConfig = {
     TIMER_A_CLOCKSOURCE_ACLK,       // ACLK Clock Source
-    TIMER_A_CLOCKSOURCE_DIVIDER_1,  // ACLK/1 = 32Khz
-    16384,
+    TIMER_A_CLOCKSOURCE_DIVIDER_1,  // 3MHz
+    1067,                           // Period to achieve 44.986kHz
     TIMER_A_TAIE_INTERRUPT_DISABLE,       // Disable Timer ISR
     TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE,  // Disable CCR0
     TIMER_A_DO_CLEAR                      // Clear Counter
@@ -151,7 +151,7 @@ const Timer_A_CompareModeConfig compareConfig = {
     TIMER_A_CAPTURECOMPARE_REGISTER_1,         // Use CCR1
     TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,  // Disable CCR interrupt
     TIMER_A_OUTPUTMODE_SET_RESET,              // Toggle output but
-    16384                                      // 16000 Period
+    1067                                       // Period to achieve 44.986kHz
 };
 
 Decimator decimator_i1;
@@ -176,16 +176,17 @@ int main(void) {
 
     // Configuring GPIO as an output
     MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
+    ROM_GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
 
-    // Configuring SysTick to trigger at 1500000 (MCLK is 1.5MHz so this will
-    // make it toggle every 1s), used for the error LED
+    // Configuring SysTick to trigger at 1500000 (MCLK is 3MHz so this will
+    // make it toggle every 0.5s), used for the error LED
     MAP_SysTick_enableModule();
     MAP_SysTick_setPeriod(1500000);
 
     // Setting up clocks
-    // MCLK = MCLK = 3MHz
-    // ACLK = REFO = 32Khz
-    MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
+
+    CS_setExternalClockSourceFrequency(32000, 48000000);
+    MAP_CS_initClockSignal(CS_ACLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1); // 48MHz
 
     // Initializing ADC (MCLK/1/1)
     MAP_ADC14_enableModule();
@@ -229,10 +230,9 @@ int main(void) {
     MAP_ADC14_configureConversionMemory(
         ADC_MEM7, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A15, false);
 
-    // Configuring Timer_A in continuous mode and sourced from ACLK
+    // Configuring Timer_A in continuous mode and sourced from MCLK
     MAP_Timer_A_configureUpMode(TIMER_A0_BASE, &upModeConfig);
 
-    // TODO(dingbenjamin): Change to 45kHz
     // Configuring Timer_A0 in CCR1 to trigger at 16000 (0.5s)
     MAP_Timer_A_initCompare(TIMER_A0_BASE, &compareConfig);
 
@@ -254,7 +254,6 @@ int main(void) {
 
     // Going to sleep
     while (1) {
-        MAP_PCM_gotoLPM0();
     }
 }
 
@@ -281,17 +280,17 @@ void ADC14_IRQHandler(void) {
             RawReadingToFloat(results_buffer[7]));  // i1 : 6.0
         auto q1 = decimator_q1.execute(
             RawReadingToFloat(results_buffer[3]));  // q1 : 4.3
-        auto i2 = decimator_i1.execute(
+        auto i2 = decimator_i2.execute(
             RawReadingToFloat(results_buffer[6]));  // i2 : 6.1
-        auto q2 = decimator_q1.execute(
+        auto q2 = decimator_q2.execute(
             RawReadingToFloat(results_buffer[5]));  // q2 : 4.0
-        auto i3 = decimator_i1.execute(
+        auto i3 = decimator_i3.execute(
             RawReadingToFloat(results_buffer[4]));  // i3 : 4.2
-        auto q3 = decimator_q1.execute(
+        auto q3 = decimator_q3.execute(
             RawReadingToFloat(results_buffer[2]));  // q3 : 4.4
-        auto i4 = decimator_i1.execute(
+        auto i4 = decimator_i4.execute(
             RawReadingToFloat(results_buffer[1]));  // i4 : 4.5
-        auto q4 = decimator_q1.execute(
+        auto q4 = decimator_q4.execute(
             RawReadingToFloat(results_buffer[0]));  // q4 : 4.7
 
         // Valid output check
