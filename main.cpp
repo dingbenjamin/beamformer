@@ -111,6 +111,31 @@ void main(void) {
 
 #ifdef RECEIVE
 
+// Converts a floating point value to a 32 bit fixed point number with range 0-5
+// Represented by a 32 bit unsigned integer
+// Undefined behaviour outside of an input in 0-5
+uint32_t FixedPointVoltage(float input) {
+    return (input * 858993459);  // 2^32 / 5
+}
+
+// Converts readings from the 8 channels into a byte array for UART transmission
+void SliceToBuffer(uint8_t buffer[4 * 8], uint32_t i1, uint32_t q1, uint32_t i2,
+                   uint32_t q2, uint32_t i3, uint32_t q3, uint32_t i4,
+                   uint32_t q4) {
+    memcpy(buffer, &i1, 4);
+    memcpy(buffer + 4, &q1, 4);
+    memcpy(buffer + 8, &i2, 4);
+    memcpy(buffer + 12, &q2, 4);
+    memcpy(buffer + 16, &i3, 4);
+    memcpy(buffer + 20, &q3, 4);
+    memcpy(buffer + 24, &i4, 4);
+    memcpy(buffer + 28, &q4, 4);
+}
+
+float RawReadingToFloat(uint16_t raw) {
+    return raw * 3.3 / (static_cast<uint16_t>(1) << 14);
+}
+
 // Timer_A Continuous Mode Configuration Parameter
 const Timer_A_UpModeConfig upModeConfig = {
     TIMER_A_CLOCKSOURCE_ACLK,       // ACLK Clock Source
@@ -129,10 +154,6 @@ const Timer_A_CompareModeConfig compareConfig = {
     16384                                      // 16000 Period
 };
 
-float RawReadingToFloat(uint16_t raw) {
-    return raw * 3.3 / (static_cast<uint16_t>(1) << 14);
-}
-
 Decimator decimator_i1;
 Decimator decimator_q1;
 Decimator decimator_i2;
@@ -142,7 +163,10 @@ Decimator decimator_q3;
 Decimator decimator_i4;
 Decimator decimator_q4;
 
-uint16_t results_buffer[8];
+Uart uart;
+
+uint16_t results_buffer[8];      // 8 channels
+uint8_t transmit_buffer[8 * 4];  // 8 channels, 4 bytes from each
 volatile bool processing = false;
 
 int main(void) {
@@ -242,6 +266,7 @@ void ADC14_IRQHandler(void) {
     // Blink the LED to alert that timing constraints have failed
     if (processing) {
         MAP_SysTick_enableInterrupt();
+        return;
     }
 
     processing = true;
@@ -269,9 +294,13 @@ void ADC14_IRQHandler(void) {
         auto q4 = decimator_q1.execute(
             RawReadingToFloat(results_buffer[0]));  // q4 : 4.7
 
-        // Valid output
-        if (i1 && q2 && i2 && q2 && i3 && q3 && i4 && q4) {
-            // TODO(dingbenjamin): Pipe out the results over UART
+        // Valid output check
+        if (i1 && q1 && i2 && q2 && i3 && q3 && i4 && q4) {
+            // Pipe out the results over UART
+            SliceToBuffer(transmit_buffer, i1.value(), q1.value(), i2.value(),
+                          q2.value(), i3.value(), q3.value(), i4.value(),
+                          q4.value());
+            uart.Write(transmit_buffer, 8 * 4);
         }
     }
 
