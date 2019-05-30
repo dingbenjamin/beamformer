@@ -27,7 +27,7 @@ class Decimator : public SignalProcessor {
     Iir3 filter_4_4{Iir3::MakeIir3(iir_stg4_den_4, iir_stg4_num_4)};
     Iir3 filter_4_5{Iir3::MakeIir3(iir_stg4_den_5, iir_stg4_num_5)};
     Gain gain_4_1{iir_stg4_gain_1};
-    Gain gain_4_2{iir_stg4_gain_1};
+    Gain gain_4_2{iir_stg4_gain_2};
     DownSampler<decimation_factor_stg4> downsampler_4{};
 
     Chain chain{std::vector<SignalProcessor*>{

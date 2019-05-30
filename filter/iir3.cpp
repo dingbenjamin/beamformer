@@ -10,10 +10,14 @@ Iir3 Iir3::MakeIir3(const float as[3], const float bs[3]) {
 tl::optional<float> Iir3::execute(tl::optional<float> sample) {
     if (!sample) return tl::nullopt;
 
-    std::rotate(&x[1], &x[1], &x[2]);
-    std::rotate(&y[0], &y[1], &y[2]);
+    // Perform rotation
+    x[2] = x[1];
+    x[1] = x[0];
+    y[2] = y[1];
+    y[1] = y[0];
+
     x[0] = sample.value();
     // TODO(dingbenjamin): Potential to optimise out this division
-    y[0] = (a0 * x[0] + a1 * x[1] + a2 * x[2] - b1 * (y[1] + b2 * y[2])) / b0;
+    y[0] = (b0 * x[0] + b1 * x[1] + b2 * x[2]) - (a1 * y[1] + a2 * y[2]) / a0;
     return y[0];
 }
