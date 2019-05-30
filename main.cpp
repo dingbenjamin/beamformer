@@ -111,7 +111,7 @@ void main(void) {
 
 #ifdef RECEIVE
 
-/* Timer_A Continuous Mode Configuration Parameter */
+// Timer_A Continuous Mode Configuration Parameter
 const Timer_A_UpModeConfig upModeConfig = {
     TIMER_A_CLOCKSOURCE_ACLK,       // ACLK Clock Source
     TIMER_A_CLOCKSOURCE_DIVIDER_1,  // ACLK/1 = 32Khz
@@ -121,7 +121,7 @@ const Timer_A_UpModeConfig upModeConfig = {
     TIMER_A_DO_CLEAR                      // Clear Counter
 };
 
-/* Timer_A Compare Configuration Parameter */
+// Timer_A Compare Configuration Parameter
 const Timer_A_CompareModeConfig compareConfig = {
     TIMER_A_CAPTURECOMPARE_REGISTER_1,         // Use CCR1
     TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,  // Disable CCR interrupt
@@ -157,29 +157,29 @@ uint16_t results_buffer[8];
 volatile bool processing = false;
 
 int main(void) {
-    /* Halting WDT  */
+    // Halting WDT
     MAP_WDT_A_holdTimer();
     MAP_Interrupt_enableSleepOnIsrExit();
 
-    /* Configuring GPIO as an output */
+    // Configuring GPIO as an output
     MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
 
-    /* Configuring SysTick to trigger at 1500000 (MCLK is 1.5MHz so this will
-     * make it toggle every 1s), used for the error LED */
+    // Configuring SysTick to trigger at 1500000 (MCLK is 1.5MHz so this will
+    // make it toggle every 1s), used for the error LED
     MAP_SysTick_enableModule();
     MAP_SysTick_setPeriod(1500000);
 
-    /* Setting up clocks
-     * MCLK = MCLK = 3MHz
-     * ACLK = REFO = 32Khz */
+    // Setting up clocks
+    // MCLK = MCLK = 3MHz
+    // ACLK = REFO = 32Khz
     MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1);
 
-    /* Initializing ADC (MCLK/1/1) */
+    // Initializing ADC (MCLK/1/1)
     MAP_ADC14_enableModule();
     MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_1,
                          0);
 
-    /* Configuring GPIOs for Analog In */
+    // Configuring GPIOs for Analog In
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(
         GPIO_PORT_P6, GPIO_PIN0 | GPIO_PIN1, GPIO_TERTIARY_MODULE_FUNCTION);
     MAP_GPIO_setAsPeripheralModuleFunctionInputPin(
@@ -187,8 +187,8 @@ int main(void) {
         GPIO_PIN0 | GPIO_PIN2 | GPIO_PIN3 | GPIO_PIN4 | GPIO_PIN5 | GPIO_PIN7,
         GPIO_TERTIARY_MODULE_FUNCTION);
 
-    /* Configuring ADC Memory (ADC_MEM0 - ADC_MEM7 (A0 - A7)  with no repeat)
-     * with internal 3.3v reference */
+    // Configuring ADC Memory (ADC_MEM0 - ADC_MEM7 (A0 - A7)  with no repeat)
+    // with internal 3.3v reference
     MAP_ADC14_configureMultiSequenceMode(ADC_MEM0, ADC_MEM7, true);
 
     // Pin 4.7
@@ -216,30 +216,30 @@ int main(void) {
     MAP_ADC14_configureConversionMemory(
         ADC_MEM7, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A15, false);
 
-    /* Configuring Timer_A in continuous mode and sourced from ACLK */
+    // Configuring Timer_A in continuous mode and sourced from ACLK
     MAP_Timer_A_configureUpMode(TIMER_A0_BASE, &upModeConfig);
 
     // TODO(dingbenjamin): Change to 45kHz
-    /* Configuring Timer_A0 in CCR1 to trigger at 16000 (0.5s) */
+    // Configuring Timer_A0 in CCR1 to trigger at 16000 (0.5s)
     MAP_Timer_A_initCompare(TIMER_A0_BASE, &compareConfig);
 
-    /* Configuring the sample trigger to be sourced from Timer_A0  and setting
-     * it to automatic iteration after it is triggered*/
+    // Configuring the sample trigger to be sourced from Timer_A0  and setting
+    // it to automatic iteration after it is triggered*/
     MAP_ADC14_setSampleHoldTrigger(ADC_TRIGGER_SOURCE1, false);
 
-    /* Enabling the interrupt when a conversion on channel 7 (end of sequence)
-     *  is complete and enabling conversions */
+    // Enabling the interrupt when a conversion on channel 7 (end of sequence)
+    //  is complete and enabling conversions
     MAP_ADC14_enableInterrupt(ADC_INT7);
     MAP_ADC14_enableConversion();
 
-    /* Enabling Interrupts */
+    // Enabling Interrupts
     MAP_Interrupt_enableInterrupt(INT_ADC14);
     MAP_Interrupt_enableMaster();
 
-    /* Starting the Timer */
+    // Starting the Timer
     MAP_Timer_A_startCounter(TIMER_A0_BASE, TIMER_A_UP_MODE);
 
-    /* Going to sleep */
+    // Going to sleep
     while (1) {
         MAP_PCM_gotoLPM0();
     }
@@ -250,8 +250,8 @@ extern "C" {
 void ADC14_IRQHandler(void) {
     uint64_t status;
 
+    // Blink the LED to alert that timing constraints have failed
     if (processing) {
-        // Blink the LED to alert that timing constraints have failed
         MAP_SysTick_enableInterrupt();
     }
 
@@ -279,9 +279,12 @@ void ADC14_IRQHandler(void) {
         auto i3 = decimator_i1.execute(results.i3);
         auto q3 = decimator_q1.execute(results.q3);
         auto i4 = decimator_i1.execute(results.i4);
-//        auto q4 = decimator_q1.execute(results.q4);
+        auto q4 = decimator_q1.execute(results.q4);
 
-        // TODO(dingbenjamin): Pipe out the results over UART
+        // Valid output
+        if (i1 && q2 && i2 && q2 && i3 && q3 && i4 && q4) {
+            // TODO(dingbenjamin): Pipe out the results over UART
+        }
     }
 
     processing = false;
