@@ -296,9 +296,14 @@ void ADC14_IRQHandler(void) {
         // Valid output check
         if (i1 && q1 && i2 && q2 && i3 && q3 && i4 && q4) {
             // Pipe out the results over UART
-            SliceToBuffer(transmit_buffer, i1.value(), q1.value(), i2.value(),
-                          q2.value(), i3.value(), q3.value(), i4.value(),
-                          q4.value());
+            SliceToBuffer(transmit_buffer, FixedPointVoltage(i1.value()),
+                          FixedPointVoltage(q1.value()),
+                          FixedPointVoltage(i2.value()),
+                          FixedPointVoltage(q2.value()),
+                          FixedPointVoltage(i3.value()),
+                          FixedPointVoltage(q3.value()),
+                          FixedPointVoltage(i4.value()),
+                          FixedPointVoltage(q4.value()));
             uart.Write(transmit_buffer, 8 * 4);
         }
     }

@@ -4,7 +4,6 @@ import csv
 uart = serial.Serial()
 uart.baudrate = 460800
 uart.port = '/dev/ttyACM0'
-uart.timeout = 1
 uart.open()
 
 FIXED_POINT_SCALING = 2**32 / 5
