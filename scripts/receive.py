@@ -2,12 +2,14 @@ import serial
 import csv 
 
 uart = serial.Serial()
-uart.baudrate = 320000
+uart.baudrate = 460800
 uart.port = '/dev/ttyACM0'
-uart.timeout = 3
+uart.timeout = 1
 uart.open()
 
 FIXED_POINT_SCALING = 2**32 / 5
+
+i = 0
 
 while True:
     data = uart.read(32)
@@ -23,5 +25,7 @@ while True:
     with open('downsampled.csv', 'a') as f:
         data_writer = csv.writer(f, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         data_writer.writerow([i1, q1, i2, q2, i3, q3, i4, q4])
+        print('{}: {}, {}, {}, {}, {}, {}, {}, {}'.format(i, i1, q1, i2, q2, i3, q3, i4, q4))
+        i += 1
 
 

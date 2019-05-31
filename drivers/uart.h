@@ -10,9 +10,9 @@ class Uart {
     // Settings for 9600 baud
     const eUSCI_UART_Config uartConfig = {
         EUSCI_A_UART_CLOCKSOURCE_SMCLK,                // SMCLK Clock Source
-        78,                                            // BRDIV = 78
-        2,                                             // UCxBRF = 2
-        0,                                             // UCxBRS = 0
+        1,                                             // BRDIV = 2
+        10,                                            // UCxBRF = 5
+        0,                                             // UCxBRS = 85
         EUSCI_A_UART_NO_PARITY,                        // No Parity
         EUSCI_A_UART_LSB_FIRST,                        // LSB First
         EUSCI_A_UART_ONE_STOP_BIT,                     // One stop bit
