@@ -158,6 +158,9 @@ int main(void) {
     MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
     ROM_GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
 
+    MAP_GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN7);
+    ROM_GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN7);
+
     // Configuring SysTick to trigger at 1500000 (MCLK is 3MHz so this will
     // make it toggle every 0.5s), used for the error LED
     MAP_SysTick_enableModule();
@@ -241,6 +244,8 @@ extern "C" {
 
 void ADC14_IRQHandler(void) {
     uint64_t status;
+
+    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN7);
 
     // Blink the LED to alert that timing constraints have failed
     if (processing) {
