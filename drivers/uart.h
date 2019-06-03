@@ -10,14 +10,14 @@ class Uart {
     // Settings for 9600 baud
     const eUSCI_UART_Config uartConfig = {
         EUSCI_A_UART_CLOCKSOURCE_SMCLK,                // SMCLK Clock Source
-        1,                                             // BRDIV = 2
-        10,                                            // UCxBRF = 5
-        0,                                             // UCxBRS = 85
+        13,
+        0,
+        0,
         EUSCI_A_UART_NO_PARITY,                        // No Parity
         EUSCI_A_UART_LSB_FIRST,                        // LSB First
         EUSCI_A_UART_ONE_STOP_BIT,                     // One stop bit
         EUSCI_A_UART_MODE,                             // UART mode
-        EUSCI_A_UART_OVERSAMPLING_BAUDRATE_GENERATION  // Oversampling
+        EUSCI_A_UART_LOW_FREQUENCY_BAUDRATE_GENERATION
     };
 
     void Read(uint8_t *read_buffer, uint8_t read_buffer_len);

@@ -128,8 +128,8 @@ void SliceToBuffer(uint8_t buffer[2 * 8], uint16_t i1, uint16_t q1, uint16_t i2,
 /* Timer_A Continuous Mode Configuration Parameter */
 const Timer_A_UpModeConfig upModeConfig =
 {
-        TIMER_A_CLOCKSOURCE_ACLK,            // ACLK Clock Source
-        TIMER_A_CLOCKSOURCE_DIVIDER_1,       // ACLK/1 = 32Khz
+        TIMER_A_CLOCKSOURCE_SMCLK,
+        TIMER_A_CLOCKSOURCE_DIVIDER_1,
         1,
         TIMER_A_TAIE_INTERRUPT_DISABLE,      // Disable Timer ISR
         TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE, // Disable CCR0
@@ -161,8 +161,8 @@ int main(void) {
     ROM_GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN7);
 
     // Setting up clocks
-//    CS_setExternalClockSourceFrequency(32000, 48000000);
-    MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1); // 48MHz
+    CS_setExternalClockSourceFrequency(32000, 48000000);
+    MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1); // 48MHz
 
     // Initializing ADC (MCLK/1/1)
     MAP_ADC14_enableModule();
