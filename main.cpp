@@ -162,7 +162,6 @@ int main(void) {
 
     // Setting up clocks
     CS_setExternalClockSourceFrequency(32000, 48000000);
-    MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1); // 48MHz
 
     // Initializing ADC (MCLK/1/1)
     MAP_ADC14_enableModule();
@@ -244,6 +243,9 @@ void ADC14_IRQHandler(void) {
 
     if (status & ADC_INT7) {
         MAP_ADC14_getMultiSequenceResult(results_buffer);
+        uint8_t sync = 77;
+        uart.Write(&sync, 1);
+        uart.Write(&sync, 1);
         uart.Write(reinterpret_cast<uint8_t*>(results_buffer), 8 * 2);
     }
 
