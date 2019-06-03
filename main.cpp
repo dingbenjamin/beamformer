@@ -243,6 +243,7 @@ int main(void) {
 extern "C" {
 
 void ADC14_IRQHandler(void) {
+    MAP_Interrupt_disableMaster();
     uint64_t status;
 
     MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN7);
@@ -275,6 +276,7 @@ void ADC14_IRQHandler(void) {
     }
 
     processing = false;
+    MAP_Interrupt_enableMaster();
 }
 
 void SysTick_Handler(void) {
