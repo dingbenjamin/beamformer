@@ -125,22 +125,24 @@ void SliceToBuffer(uint8_t buffer[2 * 8], uint16_t i1, uint16_t q1, uint16_t i2,
     memcpy(buffer + 14, &q4, 2);
 }
 
-// Timer_A Continuous Mode Configuration Parameter
-const Timer_A_UpModeConfig upModeConfig = {
-    TIMER_A_CLOCKSOURCE_SMCLK,
-    TIMER_A_CLOCKSOURCE_DIVIDER_1,
-    1,
-    TIMER_A_TAIE_INTERRUPT_DISABLE,       // Disable Timer ISR
-    TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE,  // Disable CCR0
-    TIMER_A_DO_CLEAR                      // Clear Counter
+/* Timer_A Continuous Mode Configuration Parameter */
+const Timer_A_UpModeConfig upModeConfig =
+{
+        TIMER_A_CLOCKSOURCE_ACLK,            // ACLK Clock Source
+        TIMER_A_CLOCKSOURCE_DIVIDER_1,       // ACLK/1 = 32Khz
+        1,
+        TIMER_A_TAIE_INTERRUPT_DISABLE,      // Disable Timer ISR
+        TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE, // Disable CCR0
+        TIMER_A_DO_CLEAR                     // Clear Counter
 };
 
-// Timer_A Compare Configuration Parameter
-const Timer_A_CompareModeConfig compareConfig = {
-    TIMER_A_CAPTURECOMPARE_REGISTER_1,         // Use CCR1
-    TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,  // Disable CCR interrupt
-    TIMER_A_OUTPUTMODE_SET_RESET,              // Toggle output but
-    1
+/* Timer_A Compare Configuration Parameter */
+const Timer_A_CompareModeConfig compareConfig =
+{
+        TIMER_A_CAPTURECOMPARE_REGISTER_1,          // Use CCR1
+        TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,   // Disable CCR interrupt
+        TIMER_A_OUTPUTMODE_SET_RESET,               // Toggle output but
+        1                                           // 16000 Period
 };
 
 Uart uart;
@@ -159,12 +161,12 @@ int main(void) {
     ROM_GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN7);
 
     // Setting up clocks
-    CS_setExternalClockSourceFrequency(32000, 48000000);
-    MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1); // 48MHz
+//    CS_setExternalClockSourceFrequency(32000, 48000000);
+    MAP_CS_initClockSignal(CS_ACLK, CS_REFOCLK_SELECT, CS_CLOCK_DIVIDER_1); // 48MHz
 
     // Initializing ADC (MCLK/1/1)
     MAP_ADC14_enableModule();
-    MAP_ADC14_initModule(ADC_CLOCKSOURCE_SMCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_2,
+    MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_1,
                          0);
 
     // Configuring GPIOs for Analog In
@@ -242,18 +244,7 @@ void ADC14_IRQHandler(void) {
 
     if (status & ADC_INT7) {
         MAP_ADC14_getMultiSequenceResult(results_buffer);
-
-        // Pipe out the results over UART
-        SliceToBuffer(transmit_buffer,
-                      results_buffer[7],
-                      results_buffer[3],
-                      results_buffer[6],
-                      results_buffer[5],
-                      results_buffer[4],
-                      results_buffer[2],
-                      results_buffer[1],
-                      results_buffer[0]);
-        uart.Write(transmit_buffer, 8 * 2);
+        uart.Write(reinterpret_cast<uint8_t*>(results_buffer), 8 * 2);
     }
 
     MAP_Interrupt_enableMaster();
