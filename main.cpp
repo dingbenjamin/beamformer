@@ -111,29 +111,18 @@ void main(void) {
 
 #ifdef RECEIVE
 
-// Converts a floating point value to a 32 bit fixed point number with range 0-5
-// Represented by a 32 bit unsigned integer
-// Undefined behaviour outside of an input in 0-5
-uint32_t FixedPointVoltage(float input) {
-    return (input * 858993459);  // 2^32 / 5
-}
-
 // Converts readings from the 8 channels into a byte array for UART transmission
-void SliceToBuffer(uint8_t buffer[4 * 8], uint32_t i1, uint32_t q1, uint32_t i2,
-                   uint32_t q2, uint32_t i3, uint32_t q3, uint32_t i4,
-                   uint32_t q4) {
-    memcpy(buffer, &i1, 4);
-    memcpy(buffer + 4, &q1, 4);
-    memcpy(buffer + 8, &i2, 4);
-    memcpy(buffer + 12, &q2, 4);
-    memcpy(buffer + 16, &i3, 4);
-    memcpy(buffer + 20, &q3, 4);
-    memcpy(buffer + 24, &i4, 4);
-    memcpy(buffer + 28, &q4, 4);
-}
-
-float RawReadingToFloat(uint16_t raw) {
-    return raw * 3.3 / (static_cast<uint16_t>(1) << 14);
+void SliceToBuffer(uint8_t buffer[2 * 8], uint16_t i1, uint16_t q1, uint16_t i2,
+                   uint16_t q2, uint16_t i3, uint16_t q3, uint16_t i4,
+                   uint16_t q4) {
+    memcpy(buffer, &i1, 2);
+    memcpy(buffer + 2, &q1, 2);
+    memcpy(buffer + 4, &i2, 2);
+    memcpy(buffer + 6, &q2, 2);
+    memcpy(buffer + 8, &i3, 2);
+    memcpy(buffer + 10, &q3, 2);
+    memcpy(buffer + 12, &i4, 2);
+    memcpy(buffer + 14, &q4, 2);
 }
 
 // Timer_A Continuous Mode Configuration Parameter
@@ -154,19 +143,10 @@ const Timer_A_CompareModeConfig compareConfig = {
     1067                                       // Period to achieve 44.986kHz
 };
 
-Decimator decimator_i1;
-Decimator decimator_q1;
-Decimator decimator_i2;
-Decimator decimator_q2;
-Decimator decimator_i3;
-Decimator decimator_q3;
-Decimator decimator_i4;
-Decimator decimator_q4;
-
 Uart uart;
 
 uint16_t results_buffer[8];      // 8 channels
-uint8_t transmit_buffer[8 * 4];  // 8 channels, 4 bytes from each
+uint8_t transmit_buffer[8 * 2];  // 8 channels, 2 bytes from each
 volatile bool processing = false;
 
 int main(void) {
@@ -276,36 +256,17 @@ void ADC14_IRQHandler(void) {
     if (status & ADC_INT7) {
         MAP_ADC14_getMultiSequenceResult(results_buffer);
 
-        auto i1 = decimator_i1.execute(
-            RawReadingToFloat(results_buffer[7]));  // i1 : 6.0
-        auto q1 = decimator_q1.execute(
-            RawReadingToFloat(results_buffer[3]));  // q1 : 4.3
-        auto i2 = decimator_i2.execute(
-            RawReadingToFloat(results_buffer[6]));  // i2 : 6.1
-        auto q2 = decimator_q2.execute(
-            RawReadingToFloat(results_buffer[5]));  // q2 : 4.0
-        auto i3 = decimator_i3.execute(
-            RawReadingToFloat(results_buffer[4]));  // i3 : 4.2
-        auto q3 = decimator_q3.execute(
-            RawReadingToFloat(results_buffer[2]));  // q3 : 4.4
-        auto i4 = decimator_i4.execute(
-            RawReadingToFloat(results_buffer[1]));  // i4 : 4.5
-        auto q4 = decimator_q4.execute(
-            RawReadingToFloat(results_buffer[0]));  // q4 : 4.7
-
-        // Valid output check
-        if (i1 && q1 && i2 && q2 && i3 && q3 && i4 && q4) {
-            // Pipe out the results over UART
-            SliceToBuffer(transmit_buffer, FixedPointVoltage(i1.value()),
-                          FixedPointVoltage(q1.value()),
-                          FixedPointVoltage(i2.value()),
-                          FixedPointVoltage(q2.value()),
-                          FixedPointVoltage(i3.value()),
-                          FixedPointVoltage(q3.value()),
-                          FixedPointVoltage(i4.value()),
-                          FixedPointVoltage(q4.value()));
-            uart.Write(transmit_buffer, 8 * 4);
-        }
+        // Pipe out the results over UART
+        SliceToBuffer(transmit_buffer,
+                      results_buffer[7],
+                      results_buffer[3],
+                      results_buffer[6],
+                      results_buffer[5],
+                      results_buffer[4],
+                      results_buffer[2],
+                      results_buffer[1],
+                      results_buffer[0]);
+        uart.Write(transmit_buffer, 8 * 2);
     }
 
     processing = false;
