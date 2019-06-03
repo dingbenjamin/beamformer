@@ -155,19 +155,10 @@ int main(void) {
     MAP_Interrupt_enableSleepOnIsrExit();
 
     // Configuring GPIO as an output
-    MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
-    ROM_GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
-
     MAP_GPIO_setAsOutputPin(GPIO_PORT_P2, GPIO_PIN7);
     ROM_GPIO_setOutputLowOnPin(GPIO_PORT_P2, GPIO_PIN7);
 
-    // Configuring SysTick to trigger at 1500000 (MCLK is 3MHz so this will
-    // make it toggle every 0.5s), used for the error LED
-    MAP_SysTick_enableModule();
-    MAP_SysTick_setPeriod(1500000);
-
     // Setting up clocks
-
     CS_setExternalClockSourceFrequency(32000, 48000000);
     MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1); // 48MHz
 
@@ -243,21 +234,11 @@ int main(void) {
 extern "C" {
 
 void ADC14_IRQHandler(void) {
-    MAP_Interrupt_disableMaster();
     uint64_t status;
-
-    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN7);
-
-    // Blink the LED to alert that timing constraints have failed
-    if (processing) {
-        MAP_SysTick_enableInterrupt();
-        return;
-    }
-
-    processing = true;
-
     status = MAP_ADC14_getEnabledInterruptStatus();
     MAP_ADC14_clearInterruptFlag(status);
+    MAP_Interrupt_disableMaster();
+    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P2, GPIO_PIN7);
 
     if (status & ADC_INT7) {
         MAP_ADC14_getMultiSequenceResult(results_buffer);
@@ -275,13 +256,9 @@ void ADC14_IRQHandler(void) {
         uart.Write(transmit_buffer, 8 * 2);
     }
 
-    processing = false;
     MAP_Interrupt_enableMaster();
 }
 
-void SysTick_Handler(void) {
-    MAP_GPIO_toggleOutputOnPin(GPIO_PORT_P1, GPIO_PIN0);
-}
 }
 
 #endif
