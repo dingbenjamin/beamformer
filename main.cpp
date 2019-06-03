@@ -127,9 +127,9 @@ void SliceToBuffer(uint8_t buffer[2 * 8], uint16_t i1, uint16_t q1, uint16_t i2,
 
 // Timer_A Continuous Mode Configuration Parameter
 const Timer_A_UpModeConfig upModeConfig = {
-    TIMER_A_CLOCKSOURCE_ACLK,       // ACLK Clock Source
-    TIMER_A_CLOCKSOURCE_DIVIDER_1,  // 3MHz
-    1067,                           // Period to achieve 44.986kHz
+    TIMER_A_CLOCKSOURCE_SMCLK,
+    TIMER_A_CLOCKSOURCE_DIVIDER_1,
+    1,
     TIMER_A_TAIE_INTERRUPT_DISABLE,       // Disable Timer ISR
     TIMER_A_CCIE_CCR0_INTERRUPT_DISABLE,  // Disable CCR0
     TIMER_A_DO_CLEAR                      // Clear Counter
@@ -140,7 +140,7 @@ const Timer_A_CompareModeConfig compareConfig = {
     TIMER_A_CAPTURECOMPARE_REGISTER_1,         // Use CCR1
     TIMER_A_CAPTURECOMPARE_INTERRUPT_DISABLE,  // Disable CCR interrupt
     TIMER_A_OUTPUTMODE_SET_RESET,              // Toggle output but
-    1067                                       // Period to achieve 44.986kHz
+    1
 };
 
 Uart uart;
@@ -166,11 +166,11 @@ int main(void) {
     // Setting up clocks
 
     CS_setExternalClockSourceFrequency(32000, 48000000);
-    MAP_CS_initClockSignal(CS_ACLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1); // 48MHz
+    MAP_CS_initClockSignal(CS_SMCLK, CS_HFXTCLK_SELECT, CS_CLOCK_DIVIDER_1); // 48MHz
 
     // Initializing ADC (MCLK/1/1)
     MAP_ADC14_enableModule();
-    MAP_ADC14_initModule(ADC_CLOCKSOURCE_MCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_1,
+    MAP_ADC14_initModule(ADC_CLOCKSOURCE_SMCLK, ADC_PREDIVIDER_1, ADC_DIVIDER_2,
                          0);
 
     // Configuring GPIOs for Analog In
