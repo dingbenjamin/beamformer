@@ -6,7 +6,7 @@ uart.baudrate = 921600
 uart.port = '/dev/ttyACM0'
 uart.open()
 
-Fs = 884 * 2
+Fs = 2114 * 2
 cal_length = Fs * 10
 
 q4 = 0

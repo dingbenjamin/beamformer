@@ -16,7 +16,7 @@ uart.open()
 
 # Create training signal
 fm = 200
-Fs = 884*2
+Fs = 2114*2
 t = np.arange(0, 1,1/Fs)
 training_signal = np.cos(np.deg2rad(2*np.pi*fm*t))
 sample_count = 0
