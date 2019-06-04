@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pyargus.antennaArrayPattern import array_rad_pattern_plot
 import serial
+import time
 
 uart = serial.Serial()
 uart.baudrate = 921600
@@ -29,7 +30,8 @@ estimated_signal = np.array([])
 with open('rx_cal.csv', newline='') as rx_cal_file:
     rx_cal = [float(x) for x in  list(csv.reader(rx_cal_file))[0]]
 
-with open("tests/estimated_signal_1.csv",'w') as f1, open("tests/snapshots_1.csv",'w') as f2:
+time_str = time.strftime("%Y%m%d-%H%M%S")
+with open("data/estimated_signal" + time_str + ".csv",'w+') as f1, open("data/snapshots" + time_str + ".csv",'w+') as f2:
     data_writer1 = csv.writer(f1, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     data_writer2 = csv.writer(f2, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     while sample_count < Fs * 15:
