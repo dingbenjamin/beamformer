@@ -180,30 +180,30 @@ int main(void) {
     // with internal 3.3v reference
     MAP_ADC14_configureMultiSequenceMode(ADC_MEM0, ADC_MEM7, true);
 
-    // Pin 4.7
+    // 0 - Pin 4.7 - Q4
     MAP_ADC14_configureConversionMemory(
-        ADC_MEM0, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A6, false);
-    // Pin 4.5
+        ADC_MEM0, ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A6, false);
+    // 1 - Pin 4.5 - I4
     MAP_ADC14_configureConversionMemory(
-        ADC_MEM1, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A8, false);
-    // Pin 4.4
+        ADC_MEM1, ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A8, false);
+    // 2 - Pin 4.4 - Q3
     MAP_ADC14_configureConversionMemory(
-        ADC_MEM2, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A9, false);
-    // Pin 4.3
+        ADC_MEM2, ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A9, false);
+    // 3 - Pin 4.3 - Q1
     MAP_ADC14_configureConversionMemory(
-        ADC_MEM3, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A10, false);
-    // Pin 4.2
+        ADC_MEM3, ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A10, false);
+    // 4 - Pin 4.2 - I3
     MAP_ADC14_configureConversionMemory(
-        ADC_MEM4, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A11, false);
-    // Pin 4.0
+        ADC_MEM4, ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A11, false);
+    // 5 - Pin 4.0 - Q2
     MAP_ADC14_configureConversionMemory(
-        ADC_MEM5, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A13, false);
-    // Pin 6.1
+        ADC_MEM5, ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A13, false);
+    // 6 - Pin 6.1 - I2
     MAP_ADC14_configureConversionMemory(
-        ADC_MEM6, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A14, false);
-    // Pin 6.0
+        ADC_MEM6, ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A14, false);
+    // 7 - Pin 6.0 - I1
     MAP_ADC14_configureConversionMemory(
-        ADC_MEM7, ADC_VREFPOS_INTBUF_VREFNEG_VSS, ADC_INPUT_A15, false);
+        ADC_MEM7, ADC_VREFPOS_AVCC_VREFNEG_VSS, ADC_INPUT_A15, false);
 
     // Configuring Timer_A in continuous mode and sourced from MCLK
     MAP_Timer_A_configureUpMode(TIMER_A0_BASE, &upModeConfig);

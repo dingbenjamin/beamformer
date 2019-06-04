@@ -33,14 +33,14 @@ with open("scripts/tests/estimated_signal_1.csv",'w') as f1, open("scripts/tests
             sync2 = uart.read(1)
             if int.from_bytes(sync2, byteorder='little') == 77:
                 data = uart.read(16)
-                i1 = int.from_bytes(data[0:2], byteorder='little') * 3.3 / 16384
-                q1 = int.from_bytes(data[2:4], byteorder='little') * 3.3 / 16384
-                i2 = int.from_bytes(data[4:6], byteorder='little') * 3.3 / 16384
-                q2 = int.from_bytes(data[6:8], byteorder='little') * 3.3 / 16384
+                q4 = int.from_bytes(data[0:2], byteorder='little') * 3.3 / 16384
+                i4 = int.from_bytes(data[2:4], byteorder='little') * 3.3 / 16384
+                q3 = int.from_bytes(data[4:6], byteorder='little') * 3.3 / 16384
+                q1 = int.from_bytes(data[6:8], byteorder='little') * 3.3 / 16384
                 i3 = int.from_bytes(data[8:10], byteorder='little') * 3.3 / 16384
-                q3 = int.from_bytes(data[10:12], byteorder='little') * 3.3 / 16384
-                i4 = int.from_bytes(data[12:14], byteorder='little') * 3.3 / 16384
-                q4 = int.from_bytes(data[14:16], byteorder='little') * 3.3 / 16384
+                q2 = int.from_bytes(data[10:12], byteorder='little') * 3.3 / 16384
+                i2 = int.from_bytes(data[12:14], byteorder='little') * 3.3 / 16384
+                i1 = int.from_bytes(data[14:16], byteorder='little') * 3.3 / 16384
         
                 snapshot = np.array([complex(i1, q1), complex(i2,q2), complex(i3,q3), complex(i4,q4)])
                 (w, y) = beamformer.update_weights(snapshot.reshape(num_elements,1))
