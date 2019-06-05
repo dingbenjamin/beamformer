@@ -19,7 +19,7 @@ class LmsBeamformer:
         output_estimate = np.matmul(snapshot.conj().T,self.weights_estimate)
         error = self.training_signal[self.num_snapshots%(len(self.training_signal)-1)]-output_estimate
         self.update_autocorrelation(snapshot)
-        step = 0.0005*2/np.trace(self.autocorrelation_estimate) if self.step_type == 'adaptive' else self.step_size
+        step = 0.000005*2/np.trace(self.autocorrelation_estimate) if self.step_type == 'adaptive' else self.step_size
         self.weights_estimate = self.weights_estimate + step*np.matmul(snapshot,error)
 
         return (self.weights_estimate, output_estimate)
