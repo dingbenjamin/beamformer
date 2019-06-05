@@ -24,7 +24,7 @@ uart.open()
 fm = 200
 Fs = 2114*2
 t = np.arange(0, 1,1/Fs)
-training_signal = np.cos(np.deg2rad(2*np.pi*fm*t))
+training_signal = np.cos(np.deg2rad(2*np.pi*fm*t)) + 1
 sample_count = 0
 
 num_elements = 4
@@ -46,14 +46,14 @@ with open("data/estimated_signal" + time_str + ".csv",'w+') as f1, open("data/sn
             sync2 = uart.read(1)
             if int.from_bytes(sync2, byteorder='little') == 77:
                 data = uart.read(16)
-                q4 = filter(int.from_bytes(data[0:2], byteorder='little') * 3.3 / 16384 - rx_cal[7], 0, 3.3)
-                i4 = filter(int.from_bytes(data[2:4], byteorder='little') * 3.3 / 16384 - rx_cal[6], 0, 3.3)
-                q3 = filter(int.from_bytes(data[4:6], byteorder='little') * 3.3 / 16384 - rx_cal[5], 0, 3.3)
-                q1 = filter(int.from_bytes(data[6:8], byteorder='little') * 3.3 / 16384 - rx_cal[1], 0, 3.3)
-                i3 = filter(int.from_bytes(data[8:10], byteorder='little') * 3.3 / 16384 - rx_cal[4], 0, 3.3)
-                q2 = filter(int.from_bytes(data[10:12], byteorder='little') * 3.3 / 16384 - rx_cal[3], 0, 3.3)
-                i2 = filter(int.from_bytes(data[12:14], byteorder='little') * 3.3 / 16384 - rx_cal[2], 0, 3.3)
-                i1 = filter(int.from_bytes(data[14:16], byteorder='little') * 3.3 / 16384 - rx_cal[0]
+                q4 = filter(int.from_bytes(data[0:2], byteorder='little') * 3.3 / 16384, 0, 3.3) - rx_cal[7]
+                i4 = filter(int.from_bytes(data[2:4], byteorder='little') * 3.3 / 16384, 0, 3.3) - rx_cal[6]
+                q3 = filter(int.from_bytes(data[4:6], byteorder='little') * 3.3 / 16384, 0, 3.3) - rx_cal[5]
+                q1 = filter(int.from_bytes(data[6:8], byteorder='little') * 3.3 / 16384, 0, 3.3) - rx_cal[1]
+                i3 = filter(int.from_bytes(data[8:10], byteorder='little') * 3.3 / 16384, 0, 3.3) - rx_cal[4]
+                q2 = filter(int.from_bytes(data[10:12], byteorder='little') * 3.3 / 16384, 0, 3.3) - rx_cal[3]
+                i2 = filter(int.from_bytes(data[12:14], byteorder='little') * 3.3 / 16384, 0, 3.3) - rx_cal[2]
+                i1 = filter(int.from_bytes(data[14:16], byteorder='little') * 3.3 / 16384, 0, 3.3) - rx_cal[0]
 
                 snapshot = np.array([complex(i1, q1), complex(i2,q2), complex(i3,q3), complex(i4,q4)])
                 (w, y) = beamformer.update_weights(snapshot.reshape(num_elements,1))
